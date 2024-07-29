@@ -1,17 +1,49 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React,{useState} from "react";
+import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Task from './components/Task';
 export default function App() {
+  const [task,setTask] = useState();
+  const [taskItems,setTaskItems] = useState([]);
+  const handleAddTask = () => {
+    Keyboard.dismiss();
+    setTaskItems([...taskItems,task])
+    setTask(null);
+  }
+  const completeTask = (index)=>{
+    let itemCopy = [...taskItems];
+    itemCopy.splice(index,1);
+    setTaskItems(itemCopy);
+  }
   return (
     <View style={styles.container}>
       <View style={styles.taskWrapper}>
     <Text style={styles.sectionTitle}> Today Tasks</Text>
     <View style={styles.items}>
-    <Task text={'Task 1'}/>
-    <Task text={'Task 2'}/>
+      {
+        taskItems.map((items, index)=>{
+        return (
+          <TouchableOpacity Key={index}  onPress={()=>completeTask(index)}>
+            <Task text={items}/>
+          </TouchableOpacity>
+        )
+         
+        })
+      }
+    {/* <Task text={'Task 1'}/>
+    <Task text={'Task 2'}/> */}
     
     </View>
       </View>
+      {/* Write a task secotion */}
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.writeTaskWrapper}>
+      <TextInput style={styles.input} placeholder={'Write a task'}value={task} onChangeText={text=> setTask(text)}></TextInput>
+      <TouchableOpacity onPress={()=>handleAddTask()}>
+        <View style={styles.addWrapper}>
+          <Text style={styles.addText}>+</Text>
+        </View>
+      </TouchableOpacity>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -33,5 +65,33 @@ const styles = StyleSheet.create({
   items:{
     marginTop:30,
   },
+  writeTaskWrapper : {
+    position:"absolute",
+    bottom: 60,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent:'space-around',
+    alignItems:'center',
+  },
+input:{
+  paddingVertical:15,
+  paddingHorizontal:15,
+  backgroundColor:'#FFF',
+  borderRadius:60,
+  borderWidth:1,
+  borderColor:'#C0C0C0',
+  width: 250,
+},
+addWrapper:{
+  height:60, 
+  width:60,
+  backgroundColor:'#FFF',
+  borderRadius:60,
+  justifyContent:'center',
+  alignItems:'center',
+  borderWidth:1,
+  borderColor:'#C0C0C0',
+},
+addText:{}, 
   
 },);
